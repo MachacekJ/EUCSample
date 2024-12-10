@@ -1,0 +1,16 @@
+﻿@page "/"
+@using System.Globalization
+@using EUCApp.Client.ResX
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<ResXMain> localizer
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world! @localizer[nameof(ResXMain.HomePageTitle)]</h1>
+
+Welcome to your new app.
+
+<ul>
+    <li><b>CurrentCulture</b>: @CultureInfo.CurrentCulture</li>
+    <li><b>CurrentUICulture</b>: @CultureInfo.CurrentUICulture</li>
+</ul>

@@ -1,0 +1,106 @@
+﻿@page "/patient"
+@using EUCApp.Client.Modules.PatientModule.ResX
+@using Blazored.FluentValidation
+@using EUCApp.Client.Modules.PatientModule.Models
+
+<h1>@localizer[nameof(ResXPatient.RegistrationPageTitle)]</h1>
+<TelerikNotification @ref="NotificationComponent"
+                     Class="demo-notification"
+                     AnimationDuration="300"
+                     HorizontalPosition="@NotificationHorizontalPosition.Center"
+                     VerticalPosition="@NotificationVerticalPosition.Top">
+</TelerikNotification>
+
+@if (ValidSubmit)
+{
+    <div class="demo-alert demo-alert-success" role="alert">
+        @localizer[ResXPatient.Saving]
+    </div>
+}
+else
+{
+    <TelerikForm EditContext="@PatientEditContext"
+                 Columns="2"
+                 ColumnSpacing="10px"
+                 OnValidSubmit="@HandleValidSubmit"
+                 OnInvalidSubmit="@HandleInvalidSubmit">
+        <FormValidation>
+            <FluentValidationValidator Validator="@Validator"></FluentValidationValidator>
+            @* <TelerikValidationSummary/> *@
+        </FormValidation>
+
+        <FormItems>
+            @* row 1 *@
+            <FormItem Field="@(nameof(RegisterPatientViewModel.FirstName))"/>
+            <FormItem Field="@(nameof(RegisterPatientViewModel.LastName))"/>
+
+            @* row 2 *@
+            <FormItem>
+                <Template>
+                    <label for="birthNumber" class="k-label k-form-label">@localizer[ResXPatient.BirthNumber]</label>
+                    <TelerikStackLayout Orientation="@StackLayoutOrientation.Horizontal" Spacing="15px">
+                        <TelerikCheckBox @bind-Value="@Model.IsBirthNumber"></TelerikCheckBox>
+                        <TelerikMaskedTextBox Id="birthNumber" Mask="000000/0009" Enabled="@Model.IsBirthNumber" @bind-Value="@Model.BirthNumber" OnChange="@DateNumberChange"></TelerikMaskedTextBox>
+                    </TelerikStackLayout>
+                    <TelerikValidationMessage For="@(() => Model.BirthNumber)"/>
+
+                </Template>
+            </FormItem>
+            <FormItem Enabled="@(Model.IsBirthNumber == false)" Field="@(nameof(RegisterPatientViewModel.BirthDate))"/>
+
+            @* row 3 *@
+            <FormItem Field="@(nameof(RegisterPatientViewModel.Gender))">
+                <Template>
+                    <label for="gender" class="k-label k-form-label">@localizer[ResXPatient.Gender]</label>
+                    <TelerikRadioGroup Id="gender"
+                                       Data="@Genders"
+                                       TextField="@nameof(GenderItem.Name)"
+                                       ValueField="@nameof(GenderItem.Id)"
+                                       @bind-Value="@Model.Gender"></TelerikRadioGroup>
+                    <TelerikValidationMessage For="@(() => Model.Gender)"></TelerikValidationMessage>
+                </Template>
+            </FormItem>
+            <FormItem Field="@nameof(RegisterPatientViewModel.Email)">
+                <Template>
+                    <label for="mail" class="k-label k-form-label">@localizer[ResXPatient.Email]</label>
+                    <TelerikTextBox Id="mail" @bind-Value="@Model.Email" InputMode="email" Placeholder="example@domain.com"></TelerikTextBox>
+                    <TelerikValidationMessage For="@(() => Model.Email)"></TelerikValidationMessage>
+                </Template>
+            </FormItem>
+
+            @* row 4 *@
+            <FormItem Field="@(nameof(RegisterPatientViewModel.Nationality))">
+                <Template>
+                    <label for="mail" class="k-label k-form-label">@localizer[ResXPatient.Nationality]</label>
+                    <TelerikComboBox @bind-Value="@Model.Nationality"
+                                     Data="@Nationalities"
+                                     Placeholder="Select your favourite sport..."
+                                     TextField="@nameof(NationalityItem.Name)"
+                                     ValueField="@nameof(NationalityItem.Id)"
+                                     Filterable="true"
+                                     Width="100%">
+                    </TelerikComboBox>
+                    <TelerikValidationMessage For="@(() => Model.Nationality)"></TelerikValidationMessage>
+                </Template>
+            </FormItem>
+
+            @* row 5 *@
+            <FormItem Field="@(nameof(RegisterPatientViewModel.GdprApproval))" ColSpan="2">
+                <Template>
+                    <TelerikStackLayout Orientation="@StackLayoutOrientation.Horizontal" Spacing="15px">
+                        <TelerikCheckBox Id="gdpr" @bind-Value="@Model.GdprApproval"></TelerikCheckBox>
+                        <label for="gdpr" class="k-label k-form-label">@localizer[ResXPatient.Gdpr] &nbsp; <a href="/gdpr.pdf" target="_blank">@localizer[ResXPatient.GDPR_Download]</a></label>
+                    </TelerikStackLayout>
+                    <TelerikValidationMessage For="@(() => Model.GdprApproval)"></TelerikValidationMessage>
+                </Template>
+            </FormItem>
+        </FormItems>
+        <FormButtons>
+            <TelerikButton ButtonType="ButtonType.Submit" ThemeColor="@(ThemeConstants.Button.ThemeColor.Primary)">@localizer[ResXPatient.Save]</TelerikButton>
+            @if (Model.Id > 0)
+            {
+                <a class="form-control btn btn-primary" href="/api/patient/@Model.Id" download="patients.json">Export to JSON</a>
+            }
+        </FormButtons>
+    </TelerikForm>
+}

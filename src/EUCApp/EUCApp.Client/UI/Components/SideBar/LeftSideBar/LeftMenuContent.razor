@@ -1,0 +1,8 @@
+﻿@inherits BlazorComponentBase
+
+<TelerikPanelBar Data="_rootItems"
+                 OnItemRender="@SelectActivePage" Class="jm-leftmenu">
+    <PanelBarBindings>
+        <PanelBarBinding ItemsField="Items"></PanelBarBinding>
+    </PanelBarBindings>
+</TelerikPanelBar>
